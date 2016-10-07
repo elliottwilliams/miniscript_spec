@@ -25,19 +25,19 @@ RSpec.describe '1.3 Structure' do
 
   describe '1.3.1 White space' do
     it 'should be ignored by parsing' do
-      'var foo;'.should be_a_statement
-      'var     foo;'.should be_a_statement
-      'var foo  = 56 * 9;'.should be_a_statement
-      'var foo=56*9'.should be_a_statement
+      expect('var foo;').to be_valid
+      expect('var     foo;').to be_valid
+      expect('var foo  = 56 * 9;').to be_valid
+      expect('var foo=56*9').to be_valid
     end
 
     it 'should delimit identifiers and reserved words' do
-      'var foo;'.should be_a_statement
-      'varfoo;'.should_not be_a_statement
+      expect('var foo;').to be_valid
+      expect('varfoo;').to be_invalid
     end
 
     it 'should be allowed within strings' do
-      'var foo = "yanni live at the acropolis"'.should be_a_statement
+      expect('var foo = "yanni live at the acropolis"').to be_valid
     end
   end
 
