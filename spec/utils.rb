@@ -10,22 +10,30 @@ def parser_accepts? code
   elsif output.lines.first&.chomp == 'Syntax errors' 
     false
   else
-    raise UnknownOutputError.new "#{status}:\n#{output}"
+    raise UnknownOutputError.new output
   end
 end
 
-RSpec::Matchers.define :accept do
-  match do |code|
-    parser_accepts? code
+module RSpec
+  Matchers.define :accept do
+    match do |code|
+      parser_accepts? code
+    end
   end
-end
+  Matchers.alias_matcher :accepted, :accept
+  Matchers.define_negated_matcher :reject, :accept
+  Matchers.alias_matcher :rejected, :reject
 
-RSpec::Matchers.define :be_a_statement do
-  match do |code|
-    parser_accepts? <<-EOS
+  Matchers.define :be_a_statement do
+    match do |code|
+      parser_accepts? <<-EOS
     <script type="text/JavaScript">
-    #{code}
+      #{code}
     </script>
-    EOS
+      EOS
+    end
   end
+  Matchers.alias_matcher :be_valid, :be_a_statement
+  Matchers.define_negated_matcher :be_invalid, :be_valid
+  Matchers.alias_matcher :recognize, :be_valid
 end

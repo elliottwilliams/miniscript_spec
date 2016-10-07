@@ -5,17 +5,39 @@ RSpec.describe '1.3 Structure' do
     }.should accept
   end
 
+  it 'allows extraneous newlines' do
+    %{<script type="text/JavaScript">
+
+
+    var foo;
+    </script>
+    }.should accept
+    %{<script type="text/JavaScript">
+
+
+    var foo;
+
+
+
+    </script>
+    }.should accept
+  end
+
   describe '1.3.1 White space' do
     it 'should be ignored by parsing' do
       'var foo;'.should be_a_statement
       'var     foo;'.should be_a_statement
-      'document.write(bar)'.should be_a_statement
-      'document.write ( bar )'.should be_a_statement
+      'var foo  = 56 * 9;'.should be_a_statement
+      'var foo=56*9'.should be_a_statement
     end
 
     it 'should delimit identifiers and reserved words' do
       'var foo;'.should be_a_statement
       'varfoo;'.should_not be_a_statement
+    end
+
+    it 'should be allowed within strings' do
+      'var foo = "yanni live at the acropolis"'.should be_a_statement
     end
   end
 
@@ -61,6 +83,7 @@ RSpec.describe '1.3 Structure' do
     it 'should permit newlines following' do
       %{<script type="text/JavaScript">
         </script>
+
 
 
       }.should accept
