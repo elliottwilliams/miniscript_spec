@@ -1,15 +1,5 @@
 RSpec.describe '1.5 Expressions' do
   describe '1.5.1 Arithmetic expression' do
-    it 'can be an identifier' do
-      expect('var foo = id').to be_valid
-    end
-    it 'can be a number literal' do
-      expect('var bar = 1234').to be_valid
-    end
-    it 'can be a string' do
-      expect('var baz = "hello!"').to be_valid
-    end
-
     it 'supports basic operators' do
       ['e = 4 + 3',
        'e = 3 - 2',
@@ -23,6 +13,16 @@ RSpec.describe '1.5 Expressions' do
 
     it 'supports a ridiculous expression' do
       expect('var yuuuuuuge_math_problem = ((((((((a*b+c-d)+e))+f+k)+g)+h))+i)-1000').to be_valid
+    end
+
+    describe '1.5.1.1 Operator overloads' do
+      it 'adds numbers'
+      it 'subtracts numbers'
+      it 'multiplies numbers'
+      it 'divides numbers'
+      it 'concatenates strings with +'
+      it 'rejects -, *, / on strings'
+      it 'cannot operate on a string and a number together'
     end
   end
 
@@ -47,6 +47,17 @@ RSpec.describe '1.5 Expressions' do
   end
 
   describe '1.5.3 Value resolution' do
+    it 'can be an identifier' do
+      expect('var foo = id').to be_valid
+    end
+    it 'can be a number literal' do
+      expect('var bar = 1234').to be_valid
+    end
+    it 'can be a string' do
+      expect('var baz = "hello!"').to be_valid
+    end
+
+    # TODO: merge with above cases
     it 'resolves to a string literal'
     it 'resolves to a number literal'
     it 'resolves to a scalar variable'

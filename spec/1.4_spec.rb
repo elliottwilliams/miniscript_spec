@@ -40,9 +40,13 @@ RSpec.describe '1.4 Statements' do
       expect('a = b = 0').to be_invalid
     end
 
-    it 'assigns an expression to a variable of the same type'
-    it 'does not assign to conflicting types'
+    it 'replaces LHS value with RHS value'
+    it 'performs a shallow copy'
+
+    it 'assigns to undefined variables'
+    it 'assigns to defined variables of the same type'
     it 'assigns to object properties'
+    it 'does not assign to conflicting types'
     it 'does not assign to undeclared variables'
   end
 
@@ -62,12 +66,15 @@ RSpec.describe '1.4 Statements' do
       it 'declares objects with undefined fields'
       it 'declares objects with defined fields'
       it 'declares partially defined objects'
+    end
   end
 
     describe '1.4.4 Compound statement' do
       it 'is enclosed by braces'
       it 'accepts braces on separate lines'
       it 'contains at least one statement'
-      it 'inherits a new variable scope'
+      it 'accesses variables in outer scopes'
+      it 'does not overwrite variables in outer scopes'
+      it 'does not leak variables into parent scope'
     end 
 end
