@@ -16,13 +16,36 @@ RSpec.describe '1.5 Expressions' do
     end
 
     describe '1.5.1.1 Operator overloads' do
-      it 'adds numbers'
-      it 'subtracts numbers'
-      it 'multiplies numbers'
-      it 'divides numbers'
-      it 'concatenates strings with +'
-      it 'rejects -, *, / on strings'
-      it 'cannot operate on a string and a number together'
+      it 'adds numbers' do
+        expect('4 + 20').to evaluate_to '24'
+      end
+
+      it 'subtracts numbers' do
+        expect('4 - 20').to evaluate_to '-16'
+      end
+
+      it 'multiplies numbers' do
+        expect('56*9').to evaluate_to '504'
+      end
+
+      it 'divides numbers' do
+        expect('18/3').to evaluate_to '6'
+        expect('22/7').to evaluate_to '3'
+      end
+
+      it 'concatenates strings with +' do
+        expect('"har" + "ambe"').to evaluate_to 'harambe'
+      end
+
+      it 'rejects -, *, / on strings' do
+        expect('"har" - "ambe"').to fail_evaluation
+        expect('"har" * "ambe"').to fail_evaluation
+        expect('"har" / "ambe"').to fail_evaluation
+      end
+
+      it 'cannot operate on a string and a number together' do
+        expect('99 + "red balloons"').to fail_evaluation
+      end
     end
   end
 
@@ -57,12 +80,37 @@ RSpec.describe '1.5 Expressions' do
       expect('var baz = "hello!"').to be_valid
     end
 
-    # TODO: merge with above cases
-    it 'resolves to a string literal'
-    it 'resolves to a number literal'
-    it 'resolves to a scalar variable'
-    it 'resolves to an object field'
-    it 'cannot be an object variable'
-    it 'cannot be an undefined variable'
+    it 'resolves to a string literal' do
+      expect('"foo"').to evaluate_to 'foo'
+    end
+    it 'resolves to a number literal' do
+      expect('123').to evaluate_to '123'
+    end
+
+    it 'resolves to a scalar variable' do
+      expect(%{
+             var n = 538;
+             document.write(n)}).to output('538')
+    end
+
+    it 'resolves to an object field' do
+      expect(%{
+             var o = {
+               n: 538
+             }
+             document.write(o.n)}).to output('538')
+    end
+
+    it 'cannot be an object variable' do
+      expect(%{
+             var o = {
+               n: 538
+             }
+             document.write(o)}).to fail_typecheck
+    end
+
+    it 'cannot be an undefined variable' do
+      expect('whoami').to fail_evaluation
+    end
   end
 end

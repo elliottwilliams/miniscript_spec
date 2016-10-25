@@ -1,4 +1,5 @@
 require 'open3'
+require 'pry'
 
 class UnknownOutputError < RuntimeError
 end
@@ -43,9 +44,11 @@ module RSpec
   Matchers.define :output do |expected|
     match do |code| 
       @actual = parse enclose_statements(code)
-      values_match? expected, @actual
+      values_match? @actual, expected
     end
-
+    failure_message do |actual|
+      %{expected output of to be "#{expected}", but it was instead "#{actual}"}
+    end
     diffable
   end
 
@@ -53,5 +56,18 @@ module RSpec
     match { |code| parser_typechecks? enclose_statements(code) }
   end
   Matchers.define_negated_matcher :fail_typecheck, :typecheck
+  Matchers.alias_matcher :not_typecheck, :fail_typecheck
+
+  Matchers.define :evaluate_to do |result|
+    match do |expression|
+      expect("document.write(#{expression})").to output(result)
+    end
+  end
+
+  Matchers.define :fail_evaluation do
+    match do |expression|
+      expect("document.write(#{expression})").to fail_typecheck
+    end
+  end
 
 end
