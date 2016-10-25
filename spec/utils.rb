@@ -4,28 +4,17 @@ class UnknownOutputError < RuntimeError
 end
 
 def parser_accepts? code
-  output, _ = Open3.capture2e '../parser', stdin_data: code
-  if output == '' 
-    true
-  elsif output.lines.first&.chomp == 'Syntax errors' 
-    false
-  else
-    raise UnknownOutputError.new output
-  end
-end
-
-def parser_outputs? expected, given:
-  output, _ = Open3.capture2e '../parser', stdin_data: given
-  output == expected
+  not parse(code, syntax_only: true).include? 'Syntax errors'
 end
 
 def parser_typechecks? code
-  output, _ = Open3.capture2e '../parser', stdin_data: code
-  if /type violation$/ =~ output.lines.first
-    false
-  else
-    true
-  end
+  not parse(code).include? 'type violation'
+end
+
+def parse code, syntax_only: false
+  cmd = syntax_only ? '../parser_syntax' : '../parser'
+  output, _ = Open3.capture2e cmd, stdin_data: code
+  output
 end
 
 def enclose_statements code
@@ -52,7 +41,12 @@ module RSpec
   Matchers.alias_matcher :recognize, :be_valid
 
   Matchers.define :output do |expected|
-    match { |code| parser_outputs? expected, given: enclose_statements(code) }
+    match do |code| 
+      @actual = parse enclose_statements(code)
+      values_match? expected, @actual
+    end
+
+    diffable
   end
 
   Matchers.define :typecheck do
